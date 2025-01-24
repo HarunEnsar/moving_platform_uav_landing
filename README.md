@@ -4,7 +4,11 @@
 
 <div style="text-align: justify;">
 <p style="text-align: justify;">
-  <strong> In this study, a low-cost, reliable, and high-accuracy solution is aimed to be developed using ArUco visual marker systems. The work examines the advantages and applicability of visual marker technology for autonomous UAV landings on moving platforms. Within the scope of the project, a structure based on the Ubuntu operating system and ROS (Robot Operating System) was established in the Gazebo simulation environment, and the UAV was controlled using the ArduPilot SITL software. ArUco markers were placed on the unmanned ground vehicle chosen as the moving platform, enabling the UAV to detect these markers and perform landings according to dynamic environmental conditions. Algorithms developed using the Python programming language along with the OpenCV, dronekit, and rospy libraries supported real-time detection of visual markers and the control of the landing process. The simulation results demonstrate that the system enables safe and precise landings on moving platforms while offering a low-cost and practical solution. The developed system provides an infrastructure that can increase operational efficiency, particularly in military operations and civil applications.
+  <strong> In this study, a low-cost, reliable, and high-accuracy solution is aimed to be developed using ArUco visual marker systems. The work examines the advantages and applicability of visual marker technology for autonomous UAV landings on moving platforms.Within the scope of the project, a structure based on the Ubuntu operating system and ROS (Robot Operating System) was established in the Gazebo simulation environment, and the UAV was controlled using the ArduPilot SITL software. </strong> 
+</p>
+  <p style="text-align: justify;">
+  <strong>
+ArUco markers were placed on the unmanned ground vehicle chosen as the moving platform, enabling the UAV to detect these markers and perform landings according to dynamic environmental conditions. Algorithms developed using the Python programming language along with the OpenCV, dronekit, and rospy libraries supported real-time detection of visual markers and the control of the landing process. The simulation results demonstrate that the system enables safe and precise landings on moving platforms while offering a low-cost and practical solution. The developed system provides an infrastructure that can increase operational efficiency, particularly in military operations and civil applications.
 </strong> 
 </p>
 </div>
