@@ -1,0 +1,44 @@
+<launch>
+  <!-- Gazebo boş dünya yükleniyor -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find arkhe_gazebo)/worlds/runway.world"/>
+    <arg name="verbose" value="true"/>
+  </include>
+
+  <!-- İlk Node: Drone Modelini Spawn Et -->
+  <node name="spawn_drone" pkg="gazebo_ros" type="spawn_model" 
+        args="-sdf -file $(find arkhe_gazebo)/models/drone_with_camera/model.sdf -x 0.0 -y 0.0 -z 0.0 -model iris"
+        launch-prefix="bash -c 'sleep 0; $0 $@'" />
+
+  <!-- İkinci Node: RQT Image Viewer -->
+  <node name="rqt_image_view" pkg="rqt_image_view" type="rqt_image_view" output="screen" />
+
+  <!-- Ek parametreler -->
+  <arg name="robot_namespace" default="/"/>
+  <arg name="top_plate_enable" default="false"/>
+  <arg name="x" default="2.0"/>
+  <arg name="y" default="0.0"/>
+  <arg name="z" default="0.1"/>
+  <arg name="yaw" default="0.0"/>
+
+  <!-- Husky Robot Tanımları -->
+  <group ns="$(arg robot_namespace)">
+    <include file="$(find husky_control)/launch/control.launch"/>
+    <include file="$(find husky_control)/launch/teleop.launch">
+      <arg name="joystick" value="false"/>
+    </include>
+    <param name="robot_description" 
+           command="$(find xacro)/xacro $(find arkhe_gazebo)/models/husky/urdf/ugv.urdf.xacro robot_namespace:=$(arg robot_namespace)"/>
+    <node name="spawn_mov_platf" pkg="gazebo_ros" type="spawn_model"
+          args="-x $(arg x) -y $(arg y) -z $(arg z) -Y $(arg yaw) -unpause -urdf -param robot_description -model husky -robot_namespace $(arg robot_namespace)"
+          launch-prefix="bash -c 'sleep 0; $0 $@'" />
+  </group>
+  
+  <!-- Üçüncü Node: drone_pose_controller.py -->
+  <node name="drone_pose_controller" pkg="arkhe_gazebo" type="drone_pose_controller.py" output="screen"
+        launch-prefix="bash -c 'sleep 30; $0 $@'" />
+
+  <!-- Dördüncü Node: move_platform.py -->
+  <node name="move_platform" pkg="arkhe_gazebo" type="move_platform.py" output="screen"
+        launch-prefix="bash -c 'sleep 50; $0 $@'" />
+</launch>
