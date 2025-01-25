@@ -13,7 +13,34 @@ ArUco markers were placed on the unmanned ground vehicle chosen as the moving pl
 </p>
 </div>
 
-
+---
+## 👉 📋 Dependencies & 🖥️ System Requirements
+<table>
+  <thead>
+    <tr>
+      <th>📦 Dependency</th>
+      <th>🖥️ Version/Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Ubuntu</td>
+      <td>20.04 LTS</td>
+    </tr>
+    <tr>
+      <td>ROS</td>
+      <td>Noetic</td>
+    </tr>
+    <tr>
+      <td>Gazebo</td>
+      <td>11.x</td>
+    </tr>
+    <tr>
+      <td>Ardupilot SITL</td>
+      <td>Latest Supported</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
