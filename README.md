@@ -4,7 +4,7 @@
 
 <div style="text-align: justify;">
 <p style="text-align: justify;">
-  <strong> In this study, a low-cost, reliable, and high-accuracy solution is aimed to be developed using ArUco visual marker systems. The work examines the advantages and applicability of visual marker technology for autonomous UAV landings on moving platforms.Within the scope of the project, a structure based on the Ubuntu operating system and ROS (Robot Operating System) was established in the Gazebo simulation environment, and the UAV was controlled using the ArduPilot SITL software. </strong> 
+  <strong> In this project, a low-cost, reliable, and high-accuracy solution is aimed to be developed using ArUco visual marker systems. The work examines the advantages and applicability of visual marker technology for autonomous UAV landings on moving platforms.Within the scope of the project, a structure based on the Ubuntu operating system and ROS (Robot Operating System) was established in the Gazebo simulation environment, and the UAV was controlled using the ArduPilot SITL software. </strong> 
 </p>
   <p style="text-align: justify;">
   <strong>
