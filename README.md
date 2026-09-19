@@ -13,6 +13,16 @@ ArUco markers were placed on the unmanned ground vehicle chosen as the moving pl
 </p>
 </div>
 
+<h2>Demo Video</h2>
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=7qoWE8ismxE" target="_blank">
+    <img src="https://img.youtube.com/vi/7qoWE8ismxE/maxresdefault.jpg"
+         alt="Autonomous UAV Precision Landing Demo"
+         width="800">
+  </a>
+</p>
+
 ---
 ## 👉 📋 Dependencies & 🖥️ System Requirements
 <table>
@@ -57,6 +67,15 @@ ArUco markers were placed on the unmanned ground vehicle chosen as the moving pl
 <code>catkin_make</code>
 </pre>
 <p>This will compile the packages in your workspace.</p>
+
+#### WSL
+
+If you are using WSL, switch to the `wsl` branch:
+
+```bash
+git checkout wsl
+```
+
 
 ## 🛠️ User Guide
 
