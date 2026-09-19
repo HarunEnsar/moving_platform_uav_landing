@@ -31,14 +31,17 @@ def model_states_callback(msg):
         except Exception as e:
             pass
 
+from gazebo_msgs.msg import ModelState
+
 def move_with_speed(speed):
     rospy.init_node('robot_speed_control', anonymous=True)
     rospy.loginfo("Robot hareket node baslatildi")
     
     rospy.Subscriber('/gazebo/model_states', ModelStates, model_states_callback)
     
-    pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
-    rospy.loginfo("Robot cmd_vel yayinci olusturuldu")
+    # Bypass ROS controllers and set model state directly in Gazebo for perfectly smooth movement
+    pub = rospy.Publisher('/gazebo/set_model_state', ModelState, queue_size=10)
+    rospy.loginfo("Gazebo set_model_state yayinci olusturuldu")
 
     # Dronun kalkmasini bekle
     rospy.loginfo("Dronun havalanmasi ve aracin ustune gelmesi bekleniyor...")
@@ -49,26 +52,24 @@ def move_with_speed(speed):
     if rospy.is_shutdown():
         return
 
-    rospy.loginfo("Platform hareket basliyor!")
+    rospy.loginfo("Platform hareket basliyor (Smooth Gazebo State)!")
 
-    # Twist mesajı oluşturma
-    move_cmd = Twist()
-    move_cmd.linear.x = speed  # Hızı ayarla
-    move_cmd.angular.z = 0.0 # Dönüş olmadan düz hareket
+    state_cmd = ModelState()
+    state_cmd.model_name = 'husky'
+    state_cmd.twist.linear.x = speed
+    state_cmd.reference_frame = 'world'
     
     start_time = time.time()
     
-    # 50 Hz publish rate ensures the robot's watchdog doesn't trigger
     loop_rate = rospy.Rate(50)
-    rospy.loginfo(f"Robot hareket ediyor {speed} m/s (Kesintisiz surus basladi)")
     
     while not rospy.is_shutdown() and time.time() - start_time < 1000:
-        pub.publish(move_cmd)
+        pub.publish(state_cmd)
         loop_rate.sleep()
 
     # Robotu durdur
-    move_cmd.linear.x = 0.0
-    pub.publish(move_cmd)
+    state_cmd.twist.linear.x = 0.0
+    pub.publish(state_cmd)
     rospy.loginfo("Robot durduruldu")
 
 try:
