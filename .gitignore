@@ -1,0 +1,21 @@
+# ROS/Catkin
+build/
+devel/
+install/
+.catkin_workspace
+
+# Python
+__pycache__/
+*.pyc
+
+# ArduPilot SITL / MAVProxy Logs and Data
+scripts/eeprom.bin
+scripts/logs/
+scripts/mav.parm
+scripts/mav.tlog
+scripts/mav.tlog.raw
+scripts/terrain/
+
+# IDEs
+.vscode/
+.idea/
