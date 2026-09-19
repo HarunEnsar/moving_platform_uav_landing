@@ -33,7 +33,7 @@ setup_env() {
     source $CATKIN_WS/devel/setup.bash
     export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:$PROJECT_DIR/models:$HOME/my_projects/ardupilot_gazebo/models:$HOME/catkin_ws/src/iq_sim/models
     export GAZEBO_PLUGIN_PATH=$GAZEBO_PLUGIN_PATH:$HOME/my_projects/ardupilot_gazebo/build
-    export LIBGL_ALWAYS_SOFTWARE=1
+    export GAZEBO_MODEL_DATABASE_URI="" # Online model aramasını kapatarak açılışı hızlandırır
 }
 
 # Eski süreçleri temizle
