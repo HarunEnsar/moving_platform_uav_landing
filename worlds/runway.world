@@ -27,8 +27,15 @@
       </sky>
       <ambient>0.4 0.4 0.4 1</ambient>
       <background>0.25 0.25 0.25 1</background>
-      <shadows>0</shadows>
     </scene>
+
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose frame=''>-5.0 -5.0 8.0 0.0 0.6 0.785</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
 
     <model name='grey_wall'>
       <static>1</static>

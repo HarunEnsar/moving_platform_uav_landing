@@ -68,6 +68,6 @@ def move_with_speed(speed):
     rospy.loginfo("Robot durduruldu")
 
 try:
-    move_with_speed(0.25)
+    move_with_speed(0.20)
 except rospy.ROSInterruptException:
     pass
