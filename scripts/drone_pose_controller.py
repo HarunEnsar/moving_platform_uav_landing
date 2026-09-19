@@ -46,6 +46,16 @@ notfound_count = 0
 
 time_last = 0
 time_to_wait = .1
+
+# Custom PID Variables
+prev_err_x = 0.0
+prev_err_y = 0.0
+int_err_x = 0.0
+int_err_y = 0.0
+
+PID_Kp = 1.2
+PID_Ki = 0.1
+PID_Kd = 0.4
 ############CAMERA INTRINSICS#############
 
 np_camera_matrix =np.array([
@@ -195,17 +205,44 @@ def msg_receiver(message):
                     x_avg = x_sum / 4
                     y_avg = y_sum / 4
 
-                    x_ang = (x_avg - horizontal_res*.5)*horizontal_fov/horizontal_res
-                    y_ang = (y_avg - vertical_res*.5)*vertical_fov/vertical_res
+                    # Custom PID Controller
+                    global prev_err_x, prev_err_y, int_err_x, int_err_y
+                    dt = time.time() - time_last
+                    if dt <= 0: dt = 0.1
 
-                    if vehicle.mode != 'LAND':
-                        vehicle.mode = VehicleMode('LAND')
-                        while vehicle.mode != 'LAND':
-                            time.sleep(1)
-                        rospy.loginfo('Vehicle in LAND mode!')
-                        send_land_message(x_ang, y_ang)
-                    else:
-                        send_land_message(x_ang, y_ang)
+                    # tvec[0] (Right in camera) -> Drone Y (Right)
+                    # tvec[1] (Down in camera) -> Drone X (Backward)
+                    # Marker offset from center
+                    err_x = -tvec[1] # We want drone X to move forward if marker is up (negative Y in camera)
+                    err_y = tvec[0]
+
+                    int_err_x += err_x * dt
+                    int_err_y += err_y * dt
+
+                    # Integral windup guard
+                    int_err_x = max(-1.0, min(1.0, int_err_x))
+                    int_err_y = max(-1.0, min(1.0, int_err_y))
+
+                    der_x = (err_x - prev_err_x) / dt
+                    der_y = (err_y - prev_err_y) / dt
+
+                    prev_err_x = err_x
+                    prev_err_y = err_y
+
+                    vx = PID_Kp * err_x + PID_Ki * int_err_x + PID_Kd * der_x
+                    vy = PID_Kp * err_y + PID_Ki * int_err_y + PID_Kd * der_y
+
+                    # Cok agresif hareketleri kisitla (Max 2 m/s)
+                    vx = max(-2.0, min(2.0, vx))
+                    vy = max(-2.0, min(2.0, vy))
+
+                    vz = 0.35 # Sabit inis hizi
+                    
+                    # Dron hala yere inmediyse GUIDED modda hiz komutlari gonder
+                    if vehicle.armed and vehicle.location.global_relative_frame.alt > 0.2:
+                        if vehicle.mode != 'GUIDED':
+                            vehicle.mode = VehicleMode('GUIDED')
+                        send_local_ned_velocity(vx, vy, vz)
 
                     marker_position = 'MARKER POSITION: x='+x+' y='+y+' z='+z
                     rospy.loginfo(marker_position)
@@ -232,6 +269,11 @@ def msg_receiver(message):
             rospy.loginfo('Target likely not found!')
             print(e)
             notfound_count = notfound_count + 1
+            
+            # Hedef kaybolursa inisi yavaslat ve araci durdur
+            if vehicle and vehicle.armed and vehicle.mode == 'GUIDED':
+                send_local_ned_velocity(0, 0, 0)
+                
         new_msg = rnp.msgify(Image, np_data, encoding='rgb8')
         newimg_pub.publish(new_msg)
         time_last = time.time()
@@ -252,6 +294,8 @@ def disarm_on_landing():
             rospy.loginfo("Motors disarmed.")
             break
         time.sleep(0.5)
+
+import threading
 
 if __name__=='__main__':
     try:
@@ -274,6 +318,11 @@ if __name__=='__main__':
         # 5. Inis platformu konumuna dogru ilerle (Algoritma: Inis platformu konumuna dogru ilerle)
         send_local_ned_velocity(velocity, 0, 0)
         time.sleep(1)
+        
+        # Inis tamamlandiginda disarm yapacak threadi baslat
+        disarm_thread = threading.Thread(target=disarm_on_landing)
+        disarm_thread.daemon = True
+        disarm_thread.start()
         
         # 6. Kamera subscriber - ArUco takibi (Algoritma: Isaretci algilama algoritmasi calistir)
         sub = rospy.Subscriber('/webcam/image_raw', Image, msg_receiver)
