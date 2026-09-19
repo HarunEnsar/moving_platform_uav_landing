@@ -57,6 +57,7 @@ cleanup() {
     pkill -9 -f arducopter 2>/dev/null || true
     pkill -9 -f drone_pose_controller 2>/dev/null || true
     pkill -9 -f move_platform 2>/dev/null || true
+    pkill -9 -f rqt_image_view 2>/dev/null || true
     sleep 2
     echo -e "${GREEN}Temizlik tamamlandı.${NC}"
 }
@@ -105,7 +106,7 @@ start_sitl() {
 
 # Adım 3: Drone Controller
 start_controller() {
-    echo -e "${GREEN}[3/4] Drone Controller başlatılıyor...${NC}"
+    echo -e "${GREEN}[3/5] Drone Controller başlatılıyor...${NC}"
     setup_env
     rosrun arkhe_gazebo drone_pose_controller.py &
     CTRL_PID=$!
@@ -117,11 +118,20 @@ start_controller() {
 
 # Adım 4: Platform Hareket
 start_platform() {
-    echo -e "${GREEN}[4/4] Platform hareket başlatılıyor...${NC}"
+    echo -e "${GREEN}[4/5] Platform hareket başlatılıyor...${NC}"
     setup_env
     rosrun arkhe_gazebo move_platform.py &
     PLAT_PID=$!
     echo -e "${GREEN}  Platform PID: $PLAT_PID${NC}"
+}
+
+# Adım 5: Kamera Arayüzü (rqt_image_view)
+start_rqt() {
+    echo -e "${GREEN}[5/5] rqt_image_view başlatılıyor...${NC}"
+    setup_env
+    rosrun rqt_image_view rqt_image_view /webcam/image_marked > /dev/null 2>&1 &
+    RQT_PID=$!
+    echo -e "${GREEN}  rqt_image_view PID: $RQT_PID${NC}"
 }
 
 # Ana akış
@@ -130,6 +140,7 @@ start_gazebo
 start_sitl
 start_controller
 start_platform
+start_rqt
 
 echo ""
 echo -e "${BLUE}============================================${NC}"
