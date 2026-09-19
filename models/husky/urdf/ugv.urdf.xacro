@@ -106,7 +106,7 @@
 
     <link name="marker_link">
     <visual>
-      <cast_shadows>true</cast_shadows>
+      <cast_shadows>false</cast_shadows>
       <geometry>
         <mesh filename="package://arkhe_gazebo/models/husky/meshes/marker.dae" scale="0.2 0.2 1.0"/>
       </geometry>
@@ -126,7 +126,7 @@
 
   <link name="diode0_link">
     <visual>
-      <cast_shadows>true</cast_shadows>
+      <cast_shadows>false</cast_shadows>
       <geometry>
         <mesh filename="package://arkhe_gazebo/models/husky/meshes/diode.dae" scale="0.4 0.4 0.4"/>
       </geometry>

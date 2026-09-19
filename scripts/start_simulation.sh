@@ -34,6 +34,12 @@ setup_env() {
     export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:$PROJECT_DIR/models:$HOME/my_projects/ardupilot_gazebo/models:$HOME/catkin_ws/src/iq_sim/models
     export GAZEBO_PLUGIN_PATH=$GAZEBO_PLUGIN_PATH:$HOME/my_projects/ardupilot_gazebo/build
     export GAZEBO_MODEL_DATABASE_URI="" # Online model aramasını kapatarak açılışı hızlandırır
+    
+    # WSL2 GPU Hızlandırma Ayarları (Kasma/FPS Sorununu Çözer)
+    export LIBGL_ALWAYS_INDIRECT=0
+    export MESA_GL_VERSION_OVERRIDE=4.5
+    export MESA_GLSL_VERSION_OVERRIDE=450
+    export SVGA_VGPU10=0
 }
 
 # Eski süreçleri temizle
