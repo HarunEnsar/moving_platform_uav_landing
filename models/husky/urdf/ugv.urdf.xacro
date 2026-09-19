@@ -108,12 +108,12 @@
     <visual>
       <cast_shadows>true</cast_shadows>
       <geometry>
-        <mesh filename="package://arkhe_gazebo/models/husky/meshes/marker.dae" />
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/marker.dae" scale="0.2 0.2 1.0"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://arkhe_gazebo/models/husky/meshes/marker.dae" />
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/marker.dae" scale="0.2 0.2 1.0"/>
       </geometry>
     </collision>
   </link>

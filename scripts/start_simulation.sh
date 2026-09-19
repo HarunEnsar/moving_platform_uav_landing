@@ -54,11 +54,23 @@ cleanup() {
     echo -e "${GREEN}Temizlik tamamlandı.${NC}"
 }
 
+# Argüman kontrolü
+if [ "$1" == "stop" ]; then
+    cleanup
+    exit 0
+fi
+
+GUI_ARG=""
+if [ "$1" == "headless" ]; then
+    GUI_ARG="gui:=false"
+    echo -e "${YELLOW}Headless mod aktif. Gazebo arayüzü (GUI) açılmayacak. Performans artacak!${NC}"
+fi
+
 # Adım 1: Gazebo + ROS
 start_gazebo() {
     echo -e "${GREEN}[1/4] Gazebo + ROS başlatılıyor...${NC}"
     setup_env
-    roslaunch arkhe_gazebo drone.launch &
+    roslaunch arkhe_gazebo drone.launch $GUI_ARG &
     GAZEBO_PID=$!
     echo -e "${GREEN}  Gazebo PID: $GAZEBO_PID${NC}"
     echo -e "${YELLOW}  Gazebo'nun tamamen yüklenmesi bekleniyor (20 saniye)...${NC}"

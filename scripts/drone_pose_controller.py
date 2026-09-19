@@ -28,7 +28,7 @@ newimg_pub = None
 
 
 id_to_find = 72 ##arucoID - Husky uzerindeki marker ID'si
-marker_size = 0.2 ##CM
+marker_size = 0.213 ##CM
 
 aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_5X5_250)
 parameters = aruco.DetectorParameters()
