@@ -31,7 +31,7 @@ def model_states_callback(msg):
         except Exception as e:
             pass
 
-from gazebo_msgs.msg import ModelState
+from geometry_msgs.msg import Twist
 
 def move_with_speed(speed):
     rospy.init_node('robot_speed_control', anonymous=True)
@@ -39,9 +39,15 @@ def move_with_speed(speed):
     
     rospy.Subscriber('/gazebo/model_states', ModelStates, model_states_callback)
     
-    # Bypass ROS controllers and set model state directly in Gazebo for perfectly smooth movement
-    pub = rospy.Publisher('/gazebo/set_model_state', ModelState, queue_size=10)
-    rospy.loginfo("Gazebo set_model_state yayinci olusturuldu")
+    # Bypassing twist_mux to prevent timeouts, publishing directly to wheel controllers
+    pub = rospy.Publisher('/husky_velocity_controller/cmd_vel', Twist, queue_size=10)
+    rospy.loginfo("Robot cmd_vel yayinci olusturuldu (Direkt Controller)")
+    
+    # WSL2 simülasyon gecikmelerine karşı ROS kontrolcüsünün frene basmasını engellemek için zaman aşımını artırıyoruz
+    try:
+        rospy.set_param('/husky_velocity_controller/cmd_vel_timeout', 10.0)
+    except:
+        pass
 
     # Dronun kalkmasini bekle
     rospy.loginfo("Dronun havalanmasi ve aracin ustune gelmesi bekleniyor...")
@@ -52,24 +58,23 @@ def move_with_speed(speed):
     if rospy.is_shutdown():
         return
 
-    rospy.loginfo("Platform hareket basliyor (Smooth Gazebo State)!")
+    rospy.loginfo("Platform hareket basliyor (ROS Controller)!")
 
-    state_cmd = ModelState()
-    state_cmd.model_name = 'husky'
-    state_cmd.twist.linear.x = speed
-    state_cmd.reference_frame = 'world'
+    move_cmd = Twist()
+    move_cmd.linear.x = speed
+    move_cmd.angular.z = 0.0
     
-    start_time = time.time()
+    start_time = rospy.get_time()
     
     loop_rate = rospy.Rate(50)
     
-    while not rospy.is_shutdown() and time.time() - start_time < 1000:
-        pub.publish(state_cmd)
+    while not rospy.is_shutdown() and (rospy.get_time() - start_time) < 1000:
+        pub.publish(move_cmd)
         loop_rate.sleep()
 
     # Robotu durdur
-    state_cmd.twist.linear.x = 0.0
-    pub.publish(state_cmd)
+    move_cmd.linear.x = 0.0
+    pub.publish(move_cmd)
     rospy.loginfo("Robot durduruldu")
 
 try:
