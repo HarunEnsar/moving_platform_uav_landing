@@ -10,9 +10,6 @@
         args="-sdf -file $(find arkhe_gazebo)/models/drone_with_camera/model.sdf -x 0.0 -y 0.0 -z 0.0 -model iris"
         launch-prefix="bash -c 'sleep 0; $0 $@'" />
 
-  <!-- İkinci Node: RQT Image Viewer -->
-  <node name="rqt_image_view" pkg="rqt_image_view" type="rqt_image_view" output="screen" />
-
   <!-- Ek parametreler -->
   <arg name="robot_namespace" default="/"/>
   <arg name="top_plate_enable" default="false"/>
@@ -34,11 +31,8 @@
           launch-prefix="bash -c 'sleep 0; $0 $@'" />
   </group>
   
-  <!-- Üçüncü Node: drone_pose_controller.py -->
-  <node name="drone_pose_controller" pkg="arkhe_gazebo" type="drone_pose_controller.py" output="screen"
-        launch-prefix="bash -c 'sleep 30; $0 $@'" />
+  <!-- NOT: drone_pose_controller.py ve move_platform.py ayrı terminallerde
+       SITL başlatıldıktan sonra elle çalıştırılacak.
+       Sıra: 1) Bu launch, 2) SITL, 3) controller, 4) move_platform -->
 
-  <!-- Dördüncü Node: move_platform.py -->
-  <node name="move_platform" pkg="arkhe_gazebo" type="move_platform.py" output="screen"
-        launch-prefix="bash -c 'sleep 50; $0 $@'" />
 </launch>

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 ##########IMPORTS##########
 
 import rospy
@@ -16,25 +16,23 @@ from pymavlink import mavutil
 
 bridge=CvBridge()
 
-vehicle = connect('udp:127.0.0.1:14550', wait_ready=True)
-vehicle.parameters['PLND_ENABLED'] = 1
-vehicle.parameters['PLND_TYPE'] = 1
-vehicle.parameters['PLND_EST_TYPE'] = 0
-vehicle.parameters['LAND_SPEED'] = 30
+# Vehicle will be connected in main
+vehicle = None
 
 velocity = .5
 takeoff_height = 4
 
 ##########VARIABLES##########
 
-newimg_pub = rospy.Publisher('/webcam/image_raw', Image, queue_size=10)
+newimg_pub = None
 
 
-id_to_find = 72 ##arucoID
+id_to_find = 72 ##arucoID - Husky uzerindeki marker ID'si
 marker_size = 0.2 ##CM
 
-aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_ARUCO_ORIGINAL)
+aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_5X5_250)
 parameters = aruco.DetectorParameters()
+aruco_detector = aruco.ArucoDetector(aruco_dict, parameters)
 
 horizontal_res = 640
 vertical_res = 480
@@ -59,6 +57,43 @@ np_dist_coeff = np.array([0.0, 0.0, 0.0, 0.0, 0.0], dtype=np.float32)
 
 ############FUNCTIONS#############
 
+def connect_to_vehicle(connection_string='udp:127.0.0.1:14550', max_retries=10, retry_delay=3):
+    """ArduPilot SITL'e bağlan, retry ve fallback mekanizmasıyla."""
+    global vehicle
+    candidates = [connection_string, 'udp:127.0.0.1:14550', 'tcp:127.0.0.1:5760']
+    # Unique order preserving
+    seen = set()
+    ordered_candidates = [x for x in candidates if x and not (x in seen or seen.add(x))]
+
+    for attempt in range(1, max_retries + 1):
+        for conn_str in ordered_candidates:
+            try:
+                rospy.loginfo("ArduPilot'a baglaniliyor: {} (deneme {}/{})".format(
+                    conn_str, attempt, max_retries))
+                vehicle = connect(conn_str, wait_ready=True, timeout=15, heartbeat_timeout=15)
+                rospy.loginfo("Baglanti basarili! Firmware: {}".format(vehicle.version))
+                rospy.loginfo("GPS: {}, Battery: {}".format(vehicle.gps_0, vehicle.battery))
+                return True
+            except Exception as e:
+                rospy.logwarn("Baglanti basarisiz ({}) : {}".format(conn_str, str(e)))
+        
+        if attempt < max_retries:
+            rospy.loginfo("{} saniye bekleniyor...".format(retry_delay))
+            time.sleep(retry_delay)
+            
+    rospy.logerr("Tum denemeler basarisiz! Baglanti kurulamadi.")
+    return False
+
+def setup_vehicle_parameters():
+    """Precision landing parametrelerini ayarla."""
+    global vehicle
+    rospy.loginfo("Vehicle parametreleri ayarlaniyor...")
+    vehicle.parameters['PLND_ENABLED'] = 1
+    vehicle.parameters['PLND_TYPE'] = 1
+    vehicle.parameters['PLND_EST_TYPE'] = 0
+    vehicle.parameters['LAND_SPEED'] = 30
+    rospy.loginfo("Parametreler ayarlandi.")
+
 def arm_and_takeoff(targetHeight):
     rospy.loginfo("Pre-arm checks...")
     while not vehicle.is_armable:
@@ -77,8 +112,9 @@ def arm_and_takeoff(targetHeight):
     vehicle.simple_takeoff(targetHeight)
 
     while True:
-        rospy.loginfo("Altitude: ", vehicle.location.global_relative_frame.alt)
-        if vehicle.location.global_relative_frame.alt >= targetHeight * 0.95:
+        current_alt = vehicle.location.global_relative_frame.alt
+        rospy.loginfo("Altitude: {}".format(current_alt))
+        if current_alt >= targetHeight * 0.95:
             rospy.loginfo("Target altitude reached!")
             break
         time.sleep(1)
@@ -112,7 +148,6 @@ def send_land_message(x, y):
         y,
         0,0,0)
     vehicle.send_mavlink(msg)
-    rospy.loginfo('Land message sent!')
     vehicle.flush()
 
 
@@ -127,14 +162,21 @@ def msg_receiver(message):
         np_data = rnp.numpify(message) ##Deserialize image data into array
         gray_img = cv2.cvtColor(np_data, cv2.COLOR_BGR2GRAY)
         ids = ''
-        (corners, ids, rejected) = aruco.detectMarkers(image=gray_img, dictionary=aruco_dict, parameters=parameters)
+        
+        (corners, ids, rejected) = aruco_detector.detectMarkers(image=gray_img)
 
         try:
             if ids is not None:
-                rospy.loginfo(f'Found marker with ID: {ids}')
+                rospy.loginfo('Found marker with ID: {}'.format(ids))
                 if ids[0]==id_to_find:
-                    ret = aruco.estimatePoseSingleMarkers(corners, marker_size, cameraMatrix=np_camera_matrix, distCoeffs=np_dist_coeff)
-                    (rvec, tvec) = (ret[0][0,0,:], ret[1][0,0,:])
+                    # OpenCV 4.12+ compatible pose estimation
+                    obj_points = np.array([[-marker_size/2, marker_size/2, 0],
+                                           [marker_size/2, marker_size/2, 0],
+                                           [marker_size/2, -marker_size/2, 0],
+                                           [-marker_size/2, -marker_size/2, 0]], dtype=np.float32)
+                    _, rvec, tvec = cv2.solvePnP(obj_points, corners[0][0], np_camera_matrix, np_dist_coeff)
+                    rvec = rvec.flatten()
+                    tvec = tvec.flatten()
                     x = '{:.2f}'.format(tvec[0])
                     y = '{:.2f}'.format(tvec[1])
                     z = '{:.2f}'.format(tvec[2])
@@ -161,6 +203,7 @@ def msg_receiver(message):
                         send_land_message(x_ang, y_ang)
 
                     marker_position = 'MARKER POSITION: x='+x+' y='+y+' z='+z
+                    rospy.loginfo(marker_position)
                     rospy.loginfo('FOUND COUNT: ' +str(found_count) + ' - NOTFOUND COUNT: ' +str(notfound_count))
 
                     aruco.drawDetectedMarkers(np_data, corners)
@@ -186,7 +229,6 @@ def msg_receiver(message):
             notfound_count = notfound_count + 1
         new_msg = rnp.msgify(Image, np_data, encoding='rgb8')
         newimg_pub.publish(new_msg)
-        cv2.waitKey(1)   
         time_last = time.time()
     else:
         return None
@@ -206,19 +248,36 @@ def disarm_on_landing():
             break
         time.sleep(0.5)
 
-def subscriber():
-    rospy.init_node('drone_node', anonymous=False)
-    sub = rospy.Subscriber('/webcam/image_raw', Image, msg_receiver)
-    rospy.spin()
-
 if __name__=='__main__':
     try:
+        # 1. ROS node'u baslat
+        rospy.init_node('drone_node', anonymous=False)
+        newimg_pub = rospy.Publisher('/webcam/image_marked', Image, queue_size=10)
+        
+        # 2. Drone'a baglan (UDP/TCP fallback ile)
+        if not connect_to_vehicle('udp:127.0.0.1:14550'):
+            rospy.logerr("ArduPilot baglantisi kurulamadi! Cikiliyor...")
+            exit(1)
+        
+        # 3. Parametreleri ayarla
+        setup_vehicle_parameters()
+        
+        # 4. Arm ve kalkis (Algoritma: IHA havada asili beklemede)
         arm_and_takeoff(takeoff_height)
         time.sleep(1)
+        
+        # 5. Inis platformu konumuna dogru ilerle (Algoritma: Inis platformu konumuna dogru ilerle)
         send_local_ned_velocity(velocity, 0, 0)
         time.sleep(1)
-        subscriber()
-        disarm_on_landing()
+        
+        # 6. Kamera subscriber - ArUco takibi (Algoritma: Isaretci algilama algoritmasi calistir)
+        sub = rospy.Subscriber('/webcam/image_raw', Image, msg_receiver)
+        rospy.loginfo("Kamera subscriber baslatildi. ArUco marker aranacak...")
+        rospy.spin()
 
     except rospy.ROSInterruptException:
         pass
+    finally:
+        if vehicle is not None:
+            vehicle.close()
+            rospy.loginfo("Vehicle baglantisi kapatildi.")

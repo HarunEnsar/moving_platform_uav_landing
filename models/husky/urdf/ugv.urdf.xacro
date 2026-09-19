@@ -8,12 +8,12 @@
     <visual>
       <cast_shadows>true</cast_shadows>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/platform.dae" scale="0.5 0.5 0.5"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/platform.dae" scale="0.5 0.5 0.5"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/platform.dae" scale="0.5 0.5 0.5"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/platform.dae" scale="0.5 0.5 0.5"/>
       </geometry>
     </collision>
   </link>
@@ -28,12 +28,12 @@
     <visual>
       <cast_shadows>true</cast_shadows>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/uwb_anchor.dae" scale="1 1 1"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/uwb_anchor.dae" scale="1 1 1"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/uwb_anchor.dae" scale="1 1 1"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/uwb_anchor.dae" scale="1 1 1"/>
       </geometry>
     </collision>
   </link>
@@ -48,12 +48,12 @@
     <visual>
       <cast_shadows>true</cast_shadows>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/uwb_anchor.dae" scale="1 1 1"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/uwb_anchor.dae" scale="1 1 1"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/uwb_anchor.dae" scale="1 1 1"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/uwb_anchor.dae" scale="1 1 1"/>
       </geometry>
     </collision>
   </link>
@@ -68,12 +68,12 @@
     <visual>
       <cast_shadows>true</cast_shadows>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/uwb_anchor.dae" scale="1 1 1"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/uwb_anchor.dae" scale="1 1 1"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/uwb_anchor.dae" scale="1 1 1"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/uwb_anchor.dae" scale="1 1 1"/>
       </geometry>
     </collision>
   </link>
@@ -88,12 +88,12 @@
     <visual>
       <cast_shadows>true</cast_shadows>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/uwb_anchor.dae" scale="1 1 1"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/uwb_anchor.dae" scale="1 1 1"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/uwb_anchor.dae" scale="1 1 1"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/uwb_anchor.dae" scale="1 1 1"/>
       </geometry>
     </collision>
   </link>
@@ -108,12 +108,12 @@
     <visual>
       <cast_shadows>true</cast_shadows>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/marker.dae" />
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/marker.dae" />
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/marker.dae" />
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/marker.dae" />
       </geometry>
     </collision>
   </link>
@@ -128,12 +128,12 @@
     <visual>
       <cast_shadows>true</cast_shadows>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/diode.dae" scale="0.4 0.4 0.4"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/diode.dae" scale="0.4 0.4 0.4"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/diode.dae" scale="0.4 0.4 0.4"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/diode.dae" scale="0.4 0.4 0.4"/>
       </geometry>
     </collision>
   </link>
@@ -148,12 +148,12 @@
     <visual>
       <cast_shadows>true</cast_shadows>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/diode.dae" scale="0.4 0.4 0.4"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/diode.dae" scale="0.4 0.4 0.4"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/diode.dae" scale="0.4 0.4 0.4"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/diode.dae" scale="0.4 0.4 0.4"/>
       </geometry>
     </collision>
   </link>
@@ -168,12 +168,12 @@
     <visual>
       <cast_shadows>true</cast_shadows>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/diode.dae" scale="0.4 0.4 0.4"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/diode.dae" scale="0.4 0.4 0.4"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/diode.dae" scale="0.4 0.4 0.4"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/diode.dae" scale="0.4 0.4 0.4"/>
       </geometry>
     </collision>
   </link>
@@ -188,12 +188,12 @@
     <visual>
       <cast_shadows>true</cast_shadows>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/diode.dae" scale="0.4 0.4 0.4"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/diode.dae" scale="0.4 0.4 0.4"/>
       </geometry>
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://mp_uav_landing_sim/models/husky/meshes/diode.dae" scale="0.4 0.4 0.4"/>
+        <mesh filename="package://arkhe_gazebo/models/husky/meshes/diode.dae" scale="0.4 0.4 0.4"/>
       </geometry>
     </collision>
   </link>

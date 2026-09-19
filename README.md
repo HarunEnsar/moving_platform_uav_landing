@@ -60,18 +60,18 @@ ArUco markers were placed on the unmanned ground vehicle chosen as the moving pl
 
 ## 🛠️ User Guide
 
-<strong> Terminal 1: Launch the Project</strong>
+> **Note on WSL (Windows Subsystem for Linux):** This system has been successfully tested on WSL2. Ensure that you have configured your environment correctly and run `start_simulation.sh` which handles background processes and daemon modes cleanly to prevent port/timeout errors.
+
+** Launch the Complete Simulation (Gazebo, ArduPilot SITL, MAVProxy, Controllers)**
+
+Run the all-in-one bash script from the `scripts` directory:
 
 ```bash
-roslaunch arkhe_gazebo drone.launch
+cd ~/my_projects/catkin_ws/src/moving_platform_uav_landing/scripts
+./start_simulation.sh
 ```
 
-<strong> Terminal 2: Launch ArduPilot SITL</strong>
-
-```bash
-cd ~/ardupilot/ArduCopter
-../Tools/autotest/sim_vehicle.py -w gazebo-iris --console --map
-```
+*(Note: The script automatically handles starting the MAVProxy daemon, ArduCopter SITL, the Gazebo environment, and the moving platform and drone tracking python scripts simultaneously.)*
 ## 📸 Project Screenshots
 
 <div align="center">
