@@ -92,7 +92,12 @@ def setup_vehicle_parameters():
     vehicle.parameters['PLND_TYPE'] = 1
     vehicle.parameters['PLND_EST_TYPE'] = 0
     vehicle.parameters['LAND_SPEED'] = 30
-    rospy.loginfo("Parametreler ayarlandi.")
+    
+    # Hareketli Hedef (0.4 m/s) Icin Matematiksel PID Degerleri
+    vehicle.parameters['PLND_XY_P'] = 1.8
+    vehicle.parameters['PLND_XY_I'] = 0.2
+    vehicle.parameters['PLND_XY_D'] = 0.05
+    rospy.loginfo("PID ve Precision Landing parametreleri ayarlandi.")
 
 def arm_and_takeoff(targetHeight):
     rospy.loginfo("Pre-arm checks...")

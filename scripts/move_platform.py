@@ -57,10 +57,14 @@ def move_with_speed(speed):
     move_cmd.angular.z = 0.0 # Dönüş olmadan düz hareket
     
     start_time = time.time()
+    
+    # 50 Hz publish rate ensures the robot's watchdog doesn't trigger
+    loop_rate = rospy.Rate(50)
+    rospy.loginfo(f"Robot hareket ediyor {speed} m/s (Kesintisiz surus basladi)")
+    
     while not rospy.is_shutdown() and time.time() - start_time < 1000:
-        rospy.loginfo(f"Robot hareket ediyor {speed} m/s")
         pub.publish(move_cmd)
-        rate.sleep()
+        loop_rate.sleep()
 
     # Robotu durdur
     move_cmd.linear.x = 0.0
@@ -68,6 +72,6 @@ def move_with_speed(speed):
     rospy.loginfo("Robot durduruldu")
 
 try:
-    move_with_speed(0.20)
+    move_with_speed(0.40)
 except rospy.ROSInterruptException:
     pass
