@@ -37,8 +37,9 @@ setup_env() {
     
     # WSL2 GPU Hızlandırma Ayarları (Kasma/FPS Sorununu Çözer)
     export LIBGL_ALWAYS_INDIRECT=0
-    export MESA_GL_VERSION_OVERRIDE=4.5
-    export MESA_GLSL_VERSION_OVERRIDE=450
+    export GALLIUM_DRIVER=d3d12
+    export MESA_GL_VERSION_OVERRIDE=3.3
+    export MESA_GLSL_VERSION_OVERRIDE=330
     export SVGA_VGPU10=0
 }
 
